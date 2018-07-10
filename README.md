@@ -47,14 +47,7 @@ Note: We're expecting some knowledge on handling the [Google Cloud Console](http
   
   Move the private key to a suitable location, e.g. `secrets/storage-playground-080718-523fc41d4fa1.json`.
 
-  ---
-
-  <font color=red>Note: It's not quite clear, which roles are needed for the service account. In practise (Jul 2018), you need either "Storage Admin" or "Legacy Bucket Reader" (can only be granted at the bucket, not project level) in addition to the "Object Admin". Track this: https://github.com/GoogleCloudPlatform/google-cloud-java/issues/3432
-  </font>  
-
-  ---
-
-  See [Cloud Storage IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles) for the roles.
+  The "Storage Object Admin" has all the access we need. See [Cloud Storage IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles) for the details.
   
 4. Expose the service account key via an environment variable.
 
@@ -86,13 +79,26 @@ $ sbt
 18:02:10.014 [run-main-0] INFO main.MainWrite$ - 'abc' created
 ```
 
-Writes 2-3 files to the bucket.
+Writes a single file to the bucket.
 
-Find them in Google Cloud Console.
+Note: 
 
-<!--
+>Google Cloud Storage does not support renaming buckets, or more generally an atomic way to operate on more than one object at a time. [^1]
+
+[^1]: [How to upload multiple files to google cloud storage bucket as a transaction](https://stackoverflow.com/questions/14609007/how-to-upload-multiple-files-to-google-cloud-storage-bucket-as-a-transaction) (StackOverflow)
+
+[ This means no atomic changes of multiple keys for AC, if Google Cloud Storage is the back-end. ]
+
+<!-- idea. Maybe we can use metadata in a way to emulate atomicity?
+-->
+
 ### MainWatch
 
+Q: Can we watch changes in the bucket, and/or objects' metadata?
+
+
+
+<!--
 <font color=red>There does not seem to be a way to observe changes to Google Cloud Datastore, in a streamed way.</font>
 
 This would still be fine - we can do e.g. once a second polling for new information, using the "cursor" mechanism. 

@@ -19,5 +19,5 @@ libraryDependencies ++= Seq(
 
 //libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.31.0"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.35.0"
 
