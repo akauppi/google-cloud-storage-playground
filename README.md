@@ -31,7 +31,7 @@ Note: We're expecting some knowledge on handling the [Google Cloud Console](http
   
   ![](.images/create-bucket.png)  
 
-3. Enable "Storage API" and create service
+3. Enable "Storage API" and create service account
 
   APIs & Services > Google Cloud Storage > enable
   
@@ -62,6 +62,8 @@ Note: We're expecting some knowledge on handling the [Google Cloud Console](http
   Enabling versioning for gs://abc-080718/...
   ```
 
+  Note: does not seem to be possible to set versioning via the Google Cloud Console, nor to see if it is enabled (this is somewhat strange, since versioning is an important aspect of a bucket).
+  
   tbd. Not sure, whether this would be the default (`gsutil versioning get` said `suspended` for an empty bucket).
 
 
@@ -79,23 +81,21 @@ $ sbt
 18:02:10.014 [run-main-0] INFO main.MainWrite$ - 'abc' created
 ```
 
-Writes a single file to the bucket.
+This writes an entry to a bucket, with metadata.
 
-Note: 
+---
+
+Note: Ideally, we would like to be able to write multiple entries, atomically, but that is not possible with Google Cloud Storage: 
 
 >Google Cloud Storage does not support renaming buckets, or more generally an atomic way to operate on more than one object at a time. [^1]
 
 [^1]: [How to upload multiple files to google cloud storage bucket as a transaction](https://stackoverflow.com/questions/14609007/how-to-upload-multiple-files-to-google-cloud-storage-bucket-as-a-transaction) (StackOverflow)
 
-[ This means no atomic changes of multiple keys for AC, if Google Cloud Storage is the back-end. ]
-
-<!-- idea. Maybe we can use metadata in a way to emulate atomicity?
--->
+---
 
 ### MainWatch
 
 Q: Can we watch changes in the bucket, and/or objects' metadata?
-
 
 
 <!--
