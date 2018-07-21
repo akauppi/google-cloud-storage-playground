@@ -14,7 +14,7 @@ The focus is on features needed for a "slow data" adapter. E.g. writing multiple
 
 - `sbt`
 
-### Setting up your Google Cloud 
+### Setting up Google Cloud Storage 
 
 Note: We're expecting some knowledge on handling the [Google Cloud Console](https://console.cloud.google.com/).
 
@@ -63,9 +63,39 @@ Note: We're expecting some knowledge on handling the [Google Cloud Console](http
   ```
 
   Note: does not seem to be possible to set versioning via the Google Cloud Console, nor to see if it is enabled (this is somewhat strange, since versioning is an important aspect of a bucket).
-  
-  tbd. Not sure, whether this would be the default (`gsutil versioning get` said `suspended` for an empty bucket).
 
+  Note: Give a little time for the versioning to propagate ([docs](https://cloud.google.com/storage/docs/consistency) recommend 30 seconds).
+
+
+### Setting up Google Cloud Pub/Sub
+
+To be able to watch changes to the bucket, we set up a Google Cloud Pub/Sub topic, and tie it to our bucket.
+
+---
+
+Note: This kind of things could be done programmatically, or we could provide a script in the repo for setting up the Google system. Some day.
+
+---
+
+To create the topic:
+
+```
+$ gcloud pubsub topics create abc-topic
+```
+
+A subscription to that topic:
+
+```
+$ gcloud pubsub subscriptions create abc-sub --topic abc-topic
+```
+
+Publishing changes to the topic:
+
+```
+$ gsutil notification create -t abc-topic -f json gs://abc-080718
+```
+
+This will start collecting changes right away, and keep them for 7 days. The `MainWatch` sample below can be used to list the changes.
 
   
 ## Kick the tires  
@@ -94,6 +124,17 @@ Note: Ideally, we would like to be able to write multiple entries, atomically, b
 ---
 
 ### MainWatch
+
+The above writes should have gotten collected in the Google Cloud Pub/Sub topic and subscription that we set up, above. Let's see.
+
+```
+
+```
+
+
+
+
+
 
 Q: Can we watch changes in the bucket, and/or objects' metadata?
 
